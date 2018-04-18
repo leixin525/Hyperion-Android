@@ -10,6 +10,9 @@ import com.willowtreeapps.hyperion.plugin.v1.ActivityResults;
 
 import javax.inject.Inject;
 
+/**
+ * 用于在 Activity 启动时候初始化
+ */
 @AppScope
 class InstallationLifecycleDelegate extends LifecycleDelegate {
 
@@ -29,6 +32,7 @@ class InstallationLifecycleDelegate extends LifecycleDelegate {
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         applicationInstaller.installIfNeeded();
 
+        // 在 DecorView 上添加菜单视图
         // reorganize the layout
         final ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
         final View contentView = decorView.getChildAt(0);
@@ -39,6 +43,7 @@ class InstallationLifecycleDelegate extends LifecycleDelegate {
         decorView.removeView(contentView);
 
         // embed content view within overlay
+        // 在 ContentView 上添加一层视图
         final HyperionOverlayLayout overlayLayout = new HyperionOverlayLayout(activity);
         overlayLayout.addView(contentView);
 

@@ -1,6 +1,8 @@
 package com.willowtreeapps.hyperion.attr;
 
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 public abstract class MutableViewAttribute<T> extends ViewAttribute<T> {
@@ -9,6 +11,10 @@ public abstract class MutableViewAttribute<T> extends ViewAttribute<T> {
 
     MutableViewAttribute(String key, @NonNull T value) {
         super(key, value);
+    }
+
+    MutableViewAttribute(String key, @NonNull T value, @Nullable Drawable drawable) {
+        super(key, value, drawable);
     }
 
     void setValue(T value) {

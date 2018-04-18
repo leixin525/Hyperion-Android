@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.google.auto.service.AutoService;
 import com.willowtreeapps.hyperion.attr.AttributeValue;
+import com.willowtreeapps.hyperion.attr.MutableColorViewAttribute;
 import com.willowtreeapps.hyperion.attr.MutableStringViewAttribute;
 import com.willowtreeapps.hyperion.attr.ViewAttribute;
 import com.willowtreeapps.hyperion.plugin.v1.AttributeTranslator;
@@ -41,12 +42,20 @@ public class TextViewAttributeCollector extends TypedAttributeCollector<TextView
                 view.setHint(value);
             }
         });
-        attributes.add(new ViewAttribute<>("TextColor",
-                new ColorValue(view.getCurrentTextColor()),
-                new ColorDrawable(view.getCurrentTextColor())));
-        attributes.add(new ViewAttribute<>("HintColor",
-                new ColorValue(view.getCurrentHintTextColor()),
-                new ColorDrawable(view.getCurrentHintTextColor())));
+        attributes.add(new MutableColorViewAttribute("TextColor",
+                new ColorValue(view.getCurrentTextColor())) {
+            @Override
+            protected void mutate(ColorValue value)  {
+                view.setTextColor(value.getColor());
+            }
+        });
+        attributes.add(new MutableColorViewAttribute("HintColor",
+                new ColorValue(view.getCurrentHintTextColor())) {
+            @Override
+            protected void mutate(ColorValue value)  {
+                view.setHintTextColor(value.getColor());
+            }
+        });
         attributes.add(new ViewAttribute<>("Typeface", view.getTypeface()));
         attributes.add(new ViewAttribute<>("TextSize",
                 attributeTranslator.translatePxToSp((int) view.getTextSize())));

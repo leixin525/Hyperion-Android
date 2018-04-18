@@ -1,16 +1,21 @@
 package com.willowtreeapps.hyperion.attr;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.text.method.DigitsKeyListener;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,13 +25,18 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.willowtreeapps.hyperion.attr.collectors.ColorValue;
 import com.willowtreeapps.hyperion.plugin.v1.ExtensionProvider;
 import com.willowtreeapps.hyperion.plugin.v1.PluginExtension;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
+/**
+ * 读取控件属性信息，并展示
+ */
 class AttributeDetailView extends RecyclerView {
 
     static final int ITEM_HEADER = 1;
@@ -101,6 +111,9 @@ class AttributeDetailView extends RecyclerView {
                 case ITEM_ATTRIBUTE:
                     itemView = inflater.inflate(R.layout.ha_item_attribute, parent, false);
                     return new AttributeViewHolder(itemView);
+                case ITEM_MUTABLE_COLOR_ATTRIBUTE:
+                    itemView = inflater.inflate(R.layout.ha_item_mutable_color_attribute, parent, false);
+                    return new MutableColorAttributeViewHoler(itemView);
                 case ITEM_MUTABLE_STRING_ATTRIBUTE:
                     itemView = inflater.inflate(R.layout.ha_item_mutable_string_attribute, parent, false);
                     return new MutableStringAttributeViewHolder(itemView);
@@ -148,7 +161,7 @@ class AttributeDetailView extends RecyclerView {
 
         private final TextView keyText;
         final TextView valueText;
-        private final ImageView image;
+        final ImageView image;
 
         private AttributeViewHolder(View itemView) {
             super(itemView);
@@ -171,6 +184,89 @@ class AttributeDetailView extends RecyclerView {
                 image.setVisibility(View.GONE);
             }
         }
+    }
+
+    private static class MutableColorAttributeViewHoler
+            extends AttributeViewHolder<MutableColorViewAttribute>
+            implements OnClickListener, TextWatcher, ExpandableLayout.OnExpansionUpdateListener {
+
+        private final ExpandableLayout detail;
+        private final EditText editText;
+        private final ImageView imageColor;
+
+        private MutableColorAttributeViewHoler(View itemView) {
+            super(itemView);
+            detail = itemView.findViewById(R.id.detail);
+            editText = itemView.findViewById(R.id.edit_text);
+            imageColor = itemView.findViewById(R.id.image_color);
+            itemView.setOnClickListener(this);
+            detail.setOnExpansionUpdateListener(this);
+        }
+
+        @Override
+        void onDataChanged(MutableColorViewAttribute data) {
+            super.onDataChanged(data);
+            final ColorValue colorValue = data.value;
+            boolean activated = data.isActivated();
+            itemView.setActivated(activated);
+            detail.setExpanded(activated, false);
+            loadColorValue(colorValue);
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            final MutableColorViewAttribute attribute = getData();
+            try {
+                final String value = s.toString();
+                final ColorValue colorValue = new ColorValue(Color.parseColor(value));
+                attribute.setValue(new ColorValue(Color.parseColor(value)));
+                valueText.setText(colorValue.getDisplayValue());
+                valueText.setVisibility(View.VISIBLE);
+                final ColorDrawable colorDrawable = new ColorDrawable(colorValue.getColor());
+                imageColor.setImageDrawable(colorDrawable);
+                attribute.setValue(colorValue);
+            } catch (Exception ignore) {
+            }
+        }
+
+        @Override
+        public void onClick(View v) {
+            final MutableColorViewAttribute attribute = getData();
+            boolean activated = !attribute.isActivated();
+            attribute.setActivated(activated);
+            itemView.setActivated(activated);
+            detail.setExpanded(activated);
+        }
+
+        @Override
+        public void onExpansionUpdate(float expansionFraction, int state) {
+            if (state == ExpandableLayout.State.COLLAPSED) {
+                loadColorValue(getData().value);
+            }
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        private void loadColorValue(@Nullable ColorValue colorValue) {
+            if (colorValue == null) {
+                return;
+            }
+            editText.removeTextChangedListener(this);
+            editText.setText(colorValue.getDisplayValue());
+            editText.addTextChangedListener(this);
+            imageColor.setImageDrawable(new ColorDrawable(colorValue.getColor()));
+            image.setImageDrawable(imageColor.getDrawable());
+        }
+
+
     }
 
     private static class MutableStringAttributeViewHolder

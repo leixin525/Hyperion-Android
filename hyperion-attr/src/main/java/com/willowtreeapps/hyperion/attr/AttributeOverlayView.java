@@ -18,6 +18,9 @@ import com.willowtreeapps.hyperion.plugin.v1.ExtensionProvider;
 import com.willowtreeapps.hyperion.plugin.v1.MeasurementHelper;
 import com.willowtreeapps.hyperion.plugin.v1.PluginExtension;
 
+/**
+ * 实现属性检查功能视图
+ */
 class AttributeOverlayView extends FrameLayout {
 
     private final ViewGroup contentRoot;
@@ -67,6 +70,7 @@ class AttributeOverlayView extends FrameLayout {
 
             View newTarget;
             if (currentView == touchTarget) {
+                // 如果再次选择的视图和上一个目标视图相同，则将父视图作为目标视图
                 newTarget = (View) touchTarget.getParent();
             } else {
                 newTarget = touchTarget;

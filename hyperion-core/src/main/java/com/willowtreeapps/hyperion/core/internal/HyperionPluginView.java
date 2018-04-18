@@ -26,6 +26,9 @@ import java.util.TreeSet;
 
 import javax.inject.Inject;
 
+/**
+ * 菜单视图
+ */
 public class HyperionPluginView extends FrameLayout {
 
     private final LinearLayout pluginListContainer;

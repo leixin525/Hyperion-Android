@@ -24,6 +24,9 @@ import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
 
+/**
+ * 用于启动菜单的通知
+ */
 public class HyperionService extends Service {
 
     private static final int NOTIFICATION_ID = 0x400;
@@ -60,7 +63,7 @@ public class HyperionService extends Service {
                 .setTicker("")
                 .setSmallIcon(R.drawable.logo)
                 .setOngoing(true)
-                .setVibrate(new long[] { 0 })
+                .setVibrate(new long[]{0})
                 .build();
     }
 

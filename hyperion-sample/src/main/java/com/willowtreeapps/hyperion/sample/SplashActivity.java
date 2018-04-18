@@ -6,6 +6,9 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
+import com.willowtreeapps.hyperion.plugin.v1.HyperionIgnore;
+
+@HyperionIgnore
 public class SplashActivity extends AppCompatActivity {
 
     @Override

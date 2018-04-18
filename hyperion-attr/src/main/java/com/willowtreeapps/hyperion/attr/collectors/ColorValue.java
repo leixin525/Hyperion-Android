@@ -6,13 +6,15 @@ import com.willowtreeapps.hyperion.attr.AttributeValue;
 
 public class ColorValue implements AttributeValue {
 
-    private final @ColorInt int color;
+    private final @ColorInt
+    int color;
 
     public ColorValue(@ColorInt int color) {
         this.color = color;
     }
 
-    @ColorInt int getColor() {
+    @ColorInt
+    public int getColor() {
         return this.color;
     }
 
